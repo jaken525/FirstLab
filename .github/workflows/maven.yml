@@ -45,12 +45,12 @@ jobs:
         run: mvn -B compile --file pom.xml
       - name: Upload artifact
         uses: actions/upload-artifact@v4
-      - name: Run the application
-        run: java -cp target/classes FirstLab
         with:
           name: build-artifact
           path: target/*.jar
           retention-days: 1
+      - name: Run the application
+        run: java -cp target/classes FirstLab
 
   test:
     runs-on: ubuntu-latest
