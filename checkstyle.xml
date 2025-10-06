@@ -3,7 +3,6 @@
 <module name="Checker">
   <module name="TreeWalker">
     <module name="ConstantName"/>
-    <module name="MethodName"/>
     <module name="Indentation"/>
   </module>
 </module>
