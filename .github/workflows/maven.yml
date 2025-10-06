@@ -20,6 +20,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install PyGitHub
+        run: pip install PyGitHub
+      - name: Run PR size check script
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PROJECT_OWNER: jaken525
+          PROJECT_REPO: FirstLab
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER
+
 
   build:
     runs-on: ubuntu-latest
