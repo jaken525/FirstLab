@@ -42,9 +42,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
       - name: Build project
-        run: mvn package
+        run: mvn -B compile --file pom.xml
       - name: Upload artifact
         uses: actions/upload-artifact@v4
+      - name: Run the application
+        run: java -cp target/classes FirstLab
         with:
           name: build-artifact
           path: target/*.jar
