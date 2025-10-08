@@ -1,5 +1,5 @@
 import argparse
-from github import Github
+from github import Github, Auth
 
 def main():
     parser = argparse.ArgumentParser(description="GitHub PR Checker")
@@ -11,7 +11,8 @@ def main():
 
     args = parser.parse_args()
 
-    g = Github(args.token)
+    auth = Auth.Token(args.token)
+    g = Github(auth=auth)
     repo = g.get_user(args.owner).get_repo(args.repo)
     pr = repo.get_pull(args.pr)
 
