@@ -45,6 +45,15 @@ jobs:
           distribution: 'temurin'
       - name: Build project
         run: mvn package
+      - name: Debug - List target directory
+        run: ls -la target/
+      - name: Set artifact path
+        id: set_artifact_path
+        run: |
+          ARTIFACT_PATH=$(ls target/*.jar | head -n 1)
+          ARTIFACT_NAME=$(basename "$ARTIFACT_PATH")
+          echo "artifact_path=$ARTIFACT_PATH" >> $GITHUB_OUTPUT
+          echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -92,6 +101,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: target/*.jar
-          asset_name: FirstLab.jar
+          asset_path: ${{ needs.build.outputs.artifact_path }}
+          asset_name: ${{ needs.build.outputs.artifact_name }}
           asset_content_type: application/java-archive
