@@ -1,5 +1,8 @@
 name: CI Pipeline
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     branches: [ develop, main ]
@@ -29,7 +32,6 @@ jobs:
           PROJECT_REPO: FirstLab
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER --list-members
-
 
   build:
     runs-on: ubuntu-latest
