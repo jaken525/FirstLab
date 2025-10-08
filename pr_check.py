@@ -7,7 +7,7 @@ def main():
     parser.add_argument('--owner', required=True, help='Repo Owner')
     parser.add_argument('--repo', required=True, help='Repo Name')
     parser.add_argument('--pr', required=True, type=int, help='PR Number')
-    parser.add_argument('--list-members', action='store_true', help='List team members (for grade 3)')
+    parser.add_argument('--list-members', action='store_true', help='List team members')
 
     args = parser.parse_args()
 
