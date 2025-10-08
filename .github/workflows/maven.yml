@@ -28,7 +28,7 @@ jobs:
           PROJECT_OWNER: jaken525
           PROJECT_REPO: FirstLab
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER --list-members true
+        run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER --list-members
 
 
   build:
