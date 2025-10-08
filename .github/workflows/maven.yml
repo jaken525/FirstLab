@@ -1,5 +1,8 @@
 name: CI Pipeline
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     branches: [ develop, main ]
@@ -29,7 +32,6 @@ jobs:
           PROJECT_REPO: FirstLab
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER --list-members
-
 
   build:
     runs-on: ubuntu-latest
@@ -74,5 +76,22 @@ jobs:
         with:
           name: build-artifact
           path: target/
-      - name: Publish build
-        run: echo "Publishing artifact... (e.g., upload to GitHub Releases)"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: target/FirstLab-1.0.jar
+          asset_name: FirstLab.jar
+          asset_content_type: application/java-archive
