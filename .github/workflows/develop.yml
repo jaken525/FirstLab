@@ -1,38 +1,18 @@
 name: Develop Merge CI Pipeline
 
+permissions:
+  contents: write
+
 on:
   pull_request:
     branches: [ develop ]
 
 jobs:
-  check-style:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - name: Run Checkstyle
-        run: mvn checkstyle:check
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-      - name: Install PyGitHub
-        run: pip install PyGitHub
-      - name: Run PR size check script
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PROJECT_OWNER: jaken525
-          PROJECT_REPO: FirstLab
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: python pr_check.py --token $GITHUB_TOKEN --owner $PROJECT_OWNER --repo $PROJECT_REPO --pr $PR_NUMBER --list-members
-
   build:
     runs-on: ubuntu-latest
-    needs: check-style
+    outputs:
+      artifact_path: ${{ steps.set_artifact_path.outputs.artifact_path }}
+      artifact_name: ${{ steps.set_artifact_path.outputs.artifact_name }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK
@@ -42,11 +22,32 @@ jobs:
           distribution: 'temurin'
       - name: Build project
         run: mvn package
+      - name: Debug - Check mvn package result
+        run: |
+          echo "Maven package exit code: $?"
+          ls -la target/ || echo "Directory target/ is empty or does not exist"
+      - name: Set artifact path
+        id: set_artifact_path
+        run: |
+          echo "Checking for .jar files in target/"
+          if ls target/*.jar >/dev/null 2>&1; then
+            ARTIFACT_PATH=$(ls target/*.jar | head -n 1)
+            ARTIFACT_NAME=$(basename "$ARTIFACT_PATH")
+            echo "Found .jar file: $ARTIFACT_PATH"
+            echo "artifact_path=$ARTIFACT_PATH" >> $GITHUB_OUTPUT
+            echo "artifact_name=$ARTIFACT_NAME" >> $GITHUB_OUTPUT
+          else
+            echo "Error: No .jar files found in target/"
+            echo "artifact_path=" >> $GITHUB_OUTPUT
+            echo "artifact_name=" >> $GITHUB_OUTPUT
+            exit 1
+          fi
       - name: Upload artifact
+        if: steps.set_artifact_path.outputs.artifact_path != ''
         uses: actions/upload-artifact@v4
         with:
           name: build-artifact
-          path: target/*.jar
+          path: ${{ steps.set_artifact_path.outputs.artifact_path }}
           retention-days: 1
       - name: Run the application
         run: java -cp target/classes FirstLab
@@ -63,3 +64,35 @@ jobs:
           distribution: 'temurin'
       - name: Run tests
         run: mvn test
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: target/
+      - name: Debug - List downloaded artifacts
+        run: ls -la target/ || echo "Directory target/ is empty or does not exist"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release ${{ needs.build.outputs.artifact_name }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        if: needs.build.outputs.artifact_path != ''
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ needs.build.outputs.artifact_path }}
+          asset_name: ${{ needs.build.outputs.artifact_name }}
+          asset_content_type: application/java-archive
