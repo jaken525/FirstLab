@@ -56,10 +56,10 @@ __- Михаил__
 ____
 __- Катя__
 1. Добавила .py скрипт  
-![s11](screenshots/11.png)
+![s11](screenshots/11.jpg)
 
 2. Добавила себя в мейн и исправила тесты
-![s13](screenshots/13.png)
+![s13](screenshots/13.jpg)
 
 3. Создала и завершила пулл-реквест
-![s12](screenshots/12.png)
+![s12](screenshots/12.jpg)
