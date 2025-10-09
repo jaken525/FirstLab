@@ -1,5 +1,5 @@
 import argparse
-from github import Github
+from github import Github, Auth
 
 def main():
     parser = argparse.ArgumentParser(description="GitHub PR Checker")
@@ -7,11 +7,12 @@ def main():
     parser.add_argument('--owner', required=True, help='Repo Owner')
     parser.add_argument('--repo', required=True, help='Repo Name')
     parser.add_argument('--pr', required=True, type=int, help='PR Number')
-    parser.add_argument('--list-members', action='store_true', help='List team members (for grade 3)')
+    parser.add_argument('--list-members', action='store_true', help='List team members')
 
     args = parser.parse_args()
 
-    g = Github(args.token)
+    auth = Auth.Token(args.token)
+    g = Github(auth=auth)
     repo = g.get_user(args.owner).get_repo(args.repo)
     pr = repo.get_pull(args.pr)
 
