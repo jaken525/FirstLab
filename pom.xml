@@ -56,5 +56,6 @@
         </configuration>
       </plugin>
     </plugins>
+    <finalName>FirstLab</finalName>
   </build>
 </project>
