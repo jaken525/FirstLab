@@ -1,4 +1,5 @@
 import java.io.PrintStream;
+import bruh.Calculator;
 
 public class FirstLab {
     private static final String[] GREETINGS = {
@@ -10,6 +11,12 @@ public class FirstLab {
 
     public static void main(String[] args) {
         printGreetings(System.out);
+		
+        Calculator calc = new Calculator();
+        System.out.println("Addition: " + calc.add(5.0, 3.0));
+        System.out.println("Subtraction: " + calc.subtract(5.0, 3.0));
+        System.out.println("Multiplication: " + calc.multiply(5.0, 3.0));
+        System.out.println("Division: " + calc.divide(6.0, 2.0));
     }
 
     public static void printGreetings(PrintStream out) {
