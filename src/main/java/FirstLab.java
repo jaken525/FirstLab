@@ -1,5 +1,4 @@
-package bruh;
-
+import bruh.Calculator;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
