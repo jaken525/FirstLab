@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+public class FirstLab extends Application {
 
     private TextField input1, input2, result;
     private Calculator calc = new Calculator();
