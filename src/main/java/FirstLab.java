@@ -8,7 +8,7 @@ public class FirstLab {
 
     public static void main(String[] args) {
         // Запуск в EDT
-        SwingUtilities.invokeLater(Main::createAndShowGUI);
+        SwingUtilities.invokeLater(FirstLab::createAndShowGUI);
     }
 
     private static void createAndShowGUI() {
