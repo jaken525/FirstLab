@@ -1,4 +1,4 @@
-package bruh.Calculator.ui;
+package bruh.calculator.ui;
 
 import org.assertj.swing.core.BasicRobot;
 import org.assertj.swing.core.Robot;
